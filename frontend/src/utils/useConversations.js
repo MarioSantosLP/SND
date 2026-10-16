@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { mockDeploymentResult, mockProposal } from '../data/mock.js'
+import { mockDeploymentResult, mockNetwork, mockProposal } from '../data/mock.js'
 
 const STORAGE_KEY = 'snd.conversations'
 const REPLY_DELAY_MS = 1200
@@ -93,11 +93,32 @@ export function useConversations() {
     addMessage(conversationId, {
       id: createId(),
       role: 'assistant',
-      deployment: { startedAt: Date.now(), result: mockDeploymentResult },
+      deployment: {
+        startedAt: Date.now(),
+        result: mockDeploymentResult,
+        network: mockNetwork,
+        saved: null,
+      },
     })
+  }
+
+  function saveNetwork(conversationId, messageId, { name, description }) {
+    updateConversation(conversationId, (c) => ({
+      messages: c.messages.map((m) =>
+        m.id === messageId
+          ? {
+              ...m,
+              deployment: {
+                ...m.deployment,
+                saved: { name: name.trim(), description: description.trim(), savedAt: Date.now() },
+              },
+            }
+          : m,
+      ),
+    }))
   }
 
   const sorted = [...conversations].sort((a, b) => b.updatedAt - a.updatedAt)
 
-  return { conversations: sorted, pending, send, decide, deploy }
+  return { conversations: sorted, pending, send, decide, deploy, saveNetwork }
 }

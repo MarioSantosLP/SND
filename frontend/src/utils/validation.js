@@ -46,3 +46,21 @@ export function validateSignup({ name, email, password, confirm }) {
         : '',
   }
 }
+
+export const NETWORK_NAME_MAX_LENGTH = 60
+export const NETWORK_DESCRIPTION_MAX_LENGTH = 300
+
+export function validateNetwork({ name, description }) {
+  const trimmed = name.trim()
+  return {
+    name: !trimmed
+      ? 'Network name is required.'
+      : trimmed.length > NETWORK_NAME_MAX_LENGTH
+        ? `Name must be ${NETWORK_NAME_MAX_LENGTH} characters or fewer.`
+        : '',
+    description:
+      description.length > NETWORK_DESCRIPTION_MAX_LENGTH
+        ? `Description must be ${NETWORK_DESCRIPTION_MAX_LENGTH} characters or fewer.`
+        : '',
+  }
+}

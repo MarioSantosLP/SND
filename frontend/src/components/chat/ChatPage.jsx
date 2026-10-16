@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import Icon from '../Icon.jsx'
 import logo from '../../assets/logo.png'
-import { currentUser, deploymentSteps } from '../../data/mock.js'
+import { currentUser, deploymentSteps, mockNetwork } from '../../data/mock.js'
+import SaveNetworkModal from './SaveNetworkModal.jsx'
 import './chat.css'
 
 const steps = ['Describe', 'Review & confirm', 'Save your plan']
@@ -24,7 +25,7 @@ const decisionMessages = {
 
 function ChatPage() {
   const { id } = useParams()
-  const { conversations, pending, send, decide, deploy } = useOutletContext()
+  const { conversations, pending, send, decide, deploy, saveNetwork } = useOutletContext()
   const navigate = useNavigate()
   const bottomRef = useRef(null)
 
@@ -86,7 +87,10 @@ function ChatPage() {
                 ) : (
                   <AssistantMessage key={m.id}>
                     {m.deployment ? (
-                      <Deployment deployment={m.deployment} />
+                      <Deployment
+                        deployment={m.deployment}
+                        onSave={(network) => saveNetwork(id, m.id, network)}
+                      />
                     ) : (
                       <Proposal
                         proposal={m.proposal}
@@ -184,8 +188,9 @@ function Proposal({ proposal, current, decision, onDecide }) {
   )
 }
 
-function Deployment({ deployment }) {
+function Deployment({ deployment, onSave }) {
   const [now, setNow] = useState(() => Date.now())
+  const [saving, setSaving] = useState(false)
   const ref = useRef(null)
   const totalMs = deploymentSteps.length * DEPLOY_STEP_MS
   const done = now - deployment.startedAt >= totalMs
@@ -232,10 +237,27 @@ function Deployment({ deployment }) {
           </div>
         ))}
       </dl>
-      <button type="button" className="btn-save">
-        <Icon name="layers" size={20} />
-        Save Network
-      </button>
+      {deployment.saved ? (
+        <p className="saved-note">
+          <Icon name="check" size={16} />
+          Saved as “{deployment.saved.name}”
+        </p>
+      ) : (
+        <button type="button" className="btn-save" onClick={() => setSaving(true)}>
+          <Icon name="layers" size={20} />
+          Save Network
+        </button>
+      )}
+      {saving && (
+        <SaveNetworkModal
+          network={deployment.network ?? mockNetwork}
+          onSave={(network) => {
+            onSave(network)
+            setSaving(false)
+          }}
+          onClose={() => setSaving(false)}
+        />
+      )}
     </div>
   )
 }
