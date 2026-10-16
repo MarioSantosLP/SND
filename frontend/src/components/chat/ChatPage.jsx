@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import Icon from '../Icon.jsx'
 import logo from '../../assets/logo.png'
-import { currentUser } from '../../data/mock.js'
+import { currentUser, deploymentSteps } from '../../data/mock.js'
 import './chat.css'
 
 const steps = ['Describe', 'Review & confirm', 'Save your plan']
+const DEPLOY_STEP_MS = 900
 
 const actions = [
   { decision: 'deploy', label: 'Deploy', variant: 'deploy' },
@@ -15,7 +16,7 @@ const actions = [
 ]
 
 const decisionMessages = {
-  deploy: 'Deployment requested. In the full system, SND would now book resources and deploy this network.',
+  deploy: 'You chose to deploy this configuration.',
   configs: 'Configuration files requested. In the full system, SND would generate them without deploying.',
   refine: "Sure. Tell me below what you'd like to change.",
   cancel: 'Proposal cancelled.',
@@ -23,7 +24,7 @@ const decisionMessages = {
 
 function ChatPage() {
   const { id } = useParams()
-  const { conversations, pending, send, decide } = useOutletContext()
+  const { conversations, pending, send, decide, deploy } = useOutletContext()
   const navigate = useNavigate()
   const bottomRef = useRef(null)
 
@@ -84,12 +85,18 @@ function ChatPage() {
                   </div>
                 ) : (
                   <AssistantMessage key={m.id}>
-                    <Proposal
-                      proposal={m.proposal}
-                      current={m.id === lastProposalId}
-                      decision={m.decision}
-                      onDecide={(decision) => decide(id, m.id, decision)}
-                    />
+                    {m.deployment ? (
+                      <Deployment deployment={m.deployment} />
+                    ) : (
+                      <Proposal
+                        proposal={m.proposal}
+                        current={m.id === lastProposalId}
+                        decision={m.decision}
+                        onDecide={(decision) =>
+                          decision === 'deploy' ? deploy(id, m.id) : decide(id, m.id, decision)
+                        }
+                      />
+                    )}
                   </AssistantMessage>
                 ),
               )}
@@ -174,6 +181,62 @@ function Proposal({ proposal, current, decision, onDecide }) {
         Demonstration only. No infrastructure or real configurations are created.
       </p>
     </article>
+  )
+}
+
+function Deployment({ deployment }) {
+  const [now, setNow] = useState(() => Date.now())
+  const ref = useRef(null)
+  const totalMs = deploymentSteps.length * DEPLOY_STEP_MS
+  const done = now - deployment.startedAt >= totalMs
+  const activeStep = Math.floor((now - deployment.startedAt) / DEPLOY_STEP_MS)
+
+  useEffect(() => {
+    if (done) {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      return
+    }
+    const interval = setInterval(() => setNow(Date.now()), 150)
+    return () => clearInterval(interval)
+  }, [done])
+
+  if (!done) {
+    return (
+      <ol className="deploy-steps" aria-live="polite">
+        {deploymentSteps.map((step, i) => {
+          const state = i < activeStep ? 'done' : i === activeStep ? 'active' : 'pending'
+          return (
+            <li key={step} className={`deploy-step deploy-step--${state}`}>
+              <span className="deploy-step-icon">
+                {state === 'done' && <Icon name="check" size={14} />}
+              </span>
+              {step}
+            </li>
+          )
+        })}
+      </ol>
+    )
+  }
+
+  return (
+    <div className="deployment" ref={ref}>
+      <p className="deploy-success">
+        <Icon name="check" size={20} />
+        Network deployed successfully!
+      </p>
+      <dl className="kv-table">
+        {deployment.result.map(([key, value]) => (
+          <div key={key}>
+            <dt>{key}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+      <button type="button" className="btn-save">
+        <Icon name="layers" size={20} />
+        Save Network
+      </button>
+    </div>
   )
 }
 

@@ -232,7 +232,7 @@
 
 .pill-btn--deploy {
   color: #0f2a1a;
-  background: #86e0a6;
+  background: var(--success);
 }
 
 .pill-btn--soft {
@@ -402,4 +402,104 @@
     gap: 8px 24px;
     margin-top: 32px;
   }
+}
+
+.deploy-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+  font-size: 0.85rem;
+  list-style: none;
+}
+
+.deploy-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+}
+
+.deploy-step--active {
+  color: var(--text);
+}
+
+.deploy-step--pending {
+  opacity: 0.5;
+}
+
+.deploy-step-icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+}
+
+.deploy-step--done .deploy-step-icon {
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.deploy-step--active .deploy-step-icon {
+  border-color: var(--border);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.deployment {
+  max-width: 840px;
+  padding-top: 14px;
+}
+
+.deploy-success {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.deployment .kv-table {
+  font-size: 0.85rem;
+  border-radius: 10px;
+}
+
+.deployment .kv-table div {
+  padding: 13px 16px;
+}
+
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 13px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-save:hover {
+  background: var(--accent-hover);
+}
+
+.btn-save:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
 }

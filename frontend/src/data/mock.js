@@ -4,6 +4,25 @@ export const currentUser = {
   role: 'User account',
 }
 
+export const deploymentSteps = [
+  'Validating the network plan',
+  'Booking resources',
+  'Creating virtual machines on Proxmox',
+  'Installing the Open5GS core',
+  'Starting the gNB (UERANSIM)',
+  'Registering 2 UEs',
+  'Running connectivity checks',
+]
+
+export const mockDeploymentResult = [
+  ['Status', 'Running (Simulated)'],
+  ['Core Network', 'Open5GS'],
+  ['RAN Simulator', 'UERANSIM'],
+  ['gNBs', '1'],
+  ['UEs', '2'],
+  ['Connectivity', 'Successful (Simulated)'],
+]
+
 export const mockProposal = {
   title: 'Proposed 5G Network Configuration',
   summary:
