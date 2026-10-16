@@ -23,12 +23,8 @@
   margin-bottom: 24px;
 }
 
-/* The logo's hexagon is dark navy, so it sits on a light badge to stay visible. */
-.auth-logo {
+.auth-header .logo-badge {
   padding: 6px;
-  background: #f1effa;
-  border-radius: 50%;
-  box-shadow: 0 0 28px rgba(124, 58, 237, 0.45);
 }
 
 .auth-brand {
@@ -50,7 +46,6 @@
   color: var(--text-muted);
 }
 
-/* Log In / Create Account switcher */
 .auth-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -82,7 +77,6 @@
   color: var(--text);
 }
 
-/* Form */
 .auth-form {
   display: flex;
   flex-direction: column;

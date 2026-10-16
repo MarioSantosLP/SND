@@ -1,7 +1,5 @@
 import { useState } from 'react'
 
-// Errors are derived from the current values on every render, but a field only
-// shows its error once it has been blurred or the form has been submitted.
 export function useForm(initialValues, validate) {
   const [values, setValues] = useState(initialValues)
   const [touched, setTouched] = useState({})

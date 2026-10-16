@@ -1,12 +1,15 @@
+import { useNavigate } from 'react-router-dom'
 import AuthLayout, { FormField, SubmitButton } from './AuthLayout.jsx'
 import { useForm } from '../../utils/useForm.js'
 import { validateLogin } from '../../utils/validation.js'
 
 function LoginPage() {
+  const navigate = useNavigate()
   const { fieldProps, handleSubmit } = useForm({ email: '', password: '' }, validateLogin)
 
   function onValid() {
     // TODO: call FastAPI auth endpoint once the backend exists
+    navigate('/chat')
   }
 
   return (

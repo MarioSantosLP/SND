@@ -1,8 +1,10 @@
+import { useNavigate } from 'react-router-dom'
 import AuthLayout, { FormField, SubmitButton } from './AuthLayout.jsx'
 import { useForm } from '../../utils/useForm.js'
 import { MIN_PASSWORD_LENGTH, validateSignup } from '../../utils/validation.js'
 
 function SignupPage() {
+  const navigate = useNavigate()
   const { fieldProps, handleSubmit } = useForm(
     { name: '', email: '', password: '', confirm: '' },
     validateSignup,
@@ -10,6 +12,7 @@ function SignupPage() {
 
   function onValid() {
     // TODO: call FastAPI signup endpoint once the backend exists
+    navigate('/chat')
   }
 
   return (
