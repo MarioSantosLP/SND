@@ -3,24 +3,19 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Icon from '../Icon.jsx'
 import logo from '../../assets/logo.png'
 import { currentUser } from '../../data/mock.js'
-import { useChat } from '../../utils/useChat.js'
+import { useConversations } from '../../utils/useConversations.js'
 import './layout.css'
-
-const pageTitles = {
-  '/chat': 'Chat',
-  '/implementations': 'Implementations',
-}
 
 function AppLayout() {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const chat = useChat()
+  const chat = useConversations()
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const pageTitle = pathname.startsWith('/implementations') ? 'Implementations' : 'Chat'
 
   function newChat() {
-    chat.reset()
     setMobileOpen(false)
     navigate('/chat')
   }
@@ -59,6 +54,27 @@ function AppLayout() {
             <span className="label">Implementations</span>
           </NavLink>
         </nav>
+
+        {chat.conversations.length > 0 && (
+          <section className="sidebar-history label">
+            <h2>Recent conversations</h2>
+            <ul>
+              {chat.conversations.map((c) => (
+                <li key={c.id}>
+                  <NavLink
+                    to={`/chat/${c.id}`}
+                    className="history-item"
+                    title={c.title}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <Icon name="message" size={15} />
+                    <span>{c.title}</span>
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <div className="sidebar-footer">
           <div className="workspace-status label">
@@ -113,7 +129,7 @@ function AppLayout() {
           <nav className="breadcrumb" aria-label="Breadcrumb">
             <span>Workspace</span>
             <Icon name="chevronRight" size={14} />
-            <span className="breadcrumb-current">{pageTitles[pathname]}</span>
+            <span className="breadcrumb-current">{pageTitle}</span>
           </nav>
           <span className="env-badge">
             <span className="status-dot" />

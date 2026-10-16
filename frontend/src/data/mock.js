@@ -4,11 +4,31 @@ export const currentUser = {
   role: 'User account',
 }
 
-export const assistantReply = `Thanks! Here's a first draft of a plan based on your description:
-
-• Core: Open5GS (AMF, SMF, UPF, NRF, AUSF, UDM)
-• Radio: 1 × gNB simulated with UERANSIM
-• Devices: 2 × UEs simulated with UERANSIM
-• Testing: iperf3 traffic between the UEs and the core
-
-Next you'd review this plan and confirm it before any resources are booked.`
+export const mockProposal = {
+  title: 'Proposed 5G Network Configuration',
+  summary:
+    "I've prepared a proposed plan for your 5G network. Please review the configuration below.",
+  sections: [
+    {
+      title: 'Network overview',
+      rows: [
+        ['Network type', '5G Standalone (SA)'],
+        ['Core network', 'Open5GS'],
+        ['RAN simulator', 'UERANSIM'],
+        ['gNBs', '1'],
+        ['User equipment (UEs)', '2'],
+      ],
+    },
+    {
+      title: 'Proposed network parameters',
+      rows: [
+        ['MCC', '001'],
+        ['MNC', '01'],
+        ['TAC', '1'],
+        ['DNN', 'internet'],
+        ['Slice SST', '1'],
+        ['UE subnet', '10.45.0.0/16'],
+      ],
+    },
+  ],
+}

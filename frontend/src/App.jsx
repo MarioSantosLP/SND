@@ -13,6 +13,7 @@ function App() {
       <Route path="/signup" element={<SignupPage />} />
       <Route element={<AppLayout />}>
         <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat/:id" element={<ChatPage />} />
         <Route path="/implementations" element={<ImplementationsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/login" replace />} />
