@@ -393,3 +393,12 @@
     display: none;
   }
 }
+
+.nav-count {
+  margin-left: auto;
+  padding: 1px 8px;
+  font-size: 0.75rem;
+  color: var(--text);
+  background: var(--bg-deep);
+  border-radius: 6px;
+}

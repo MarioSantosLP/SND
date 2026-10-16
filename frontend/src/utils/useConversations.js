@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { mockDeploymentResult, mockNetwork, mockProposal } from '../data/mock.js'
+import { createId, loadJSON, saveJSON } from './storage.js'
 
 const STORAGE_KEY = 'snd.conversations'
 const REPLY_DELAY_MS = 1200
 const TITLE_MAX_LENGTH = 40
-
-function createId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
-}
 
 function makeTitle(text) {
   const firstLine = text.split('\n')[0].trim()
@@ -16,30 +13,13 @@ function makeTitle(text) {
     : firstLine
 }
 
-function loadConversations() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? []
-  } catch {
-    return []
-  }
-}
-
-function saveConversations(conversations) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations))
-    return true
-  } catch {
-    return false
-  }
-}
-
 export function useConversations() {
-  const [conversations, setConversations] = useState(loadConversations)
+  const [conversations, setConversations] = useState(() => loadJSON(STORAGE_KEY, []))
   const [pending, setPending] = useState([])
   const timers = useRef(new Set())
 
   useEffect(() => {
-    saveConversations(conversations)
+    saveJSON(STORAGE_KEY, conversations)
   }, [conversations])
 
   useEffect(() => {
@@ -97,28 +77,20 @@ export function useConversations() {
         startedAt: Date.now(),
         result: mockDeploymentResult,
         network: mockNetwork,
-        saved: null,
+        savedNetworkId: null,
       },
     })
   }
 
-  function saveNetwork(conversationId, messageId, { name, description }) {
+  function markSaved(conversationId, messageId, networkId) {
     updateConversation(conversationId, (c) => ({
       messages: c.messages.map((m) =>
-        m.id === messageId
-          ? {
-              ...m,
-              deployment: {
-                ...m.deployment,
-                saved: { name: name.trim(), description: description.trim(), savedAt: Date.now() },
-              },
-            }
-          : m,
+        m.id === messageId ? { ...m, deployment: { ...m.deployment, savedNetworkId: networkId } } : m,
       ),
     }))
   }
 
   const sorted = [...conversations].sort((a, b) => b.updatedAt - a.updatedAt)
 
-  return { conversations: sorted, pending, send, decide, deploy, saveNetwork }
+  return { conversations: sorted, pending, send, decide, deploy, markSaved }
 }

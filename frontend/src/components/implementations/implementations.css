@@ -1,0 +1,323 @@
+.implementations {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 64px 48px 40px;
+}
+
+.impl-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.impl-eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.impl-header h1 {
+  margin: 14px 0 0;
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.impl-subtitle {
+  margin: 18px 0 0;
+  color: var(--text-muted);
+}
+
+.impl-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-top: 24px;
+  padding: 14px 22px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.impl-create:hover {
+  background: var(--accent-hover);
+}
+
+.impl-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 56px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.impl-toolbar h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.impl-count {
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--surface-raised);
+  border-radius: 5px;
+}
+
+.impl-storage {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.impl-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  color: #c4b5fd;
+  background: var(--surface-raised);
+  border-radius: 10px;
+}
+
+.impl-icon--lg {
+  width: 68px;
+  height: 68px;
+  border-radius: 14px;
+}
+
+.impl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 24px;
+  padding: 100px 24px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.impl-empty h3 {
+  margin: 30px 0 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.impl-empty p {
+  max-width: 360px;
+  margin: 16px 0 0;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+
+.impl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+  gap: 24px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.impl-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.impl-card-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.impl-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.impl-status--deployed {
+  color: var(--success);
+}
+
+.impl-status--deploying {
+  color: #c4b5fd;
+}
+
+.impl-delete {
+  display: grid;
+  place-items: center;
+  margin-left: auto;
+  padding: 6px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.impl-delete:hover {
+  color: var(--danger);
+  background: var(--surface-raised);
+}
+
+.impl-card h3 {
+  margin: 26px 0 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.impl-description {
+  min-height: 3em;
+  margin: 14px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.impl-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 30px;
+  margin: 18px 0 0;
+  padding: 22px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.impl-specs dt {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.impl-specs dd {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.impl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.impl-btn {
+  padding: 12px 18px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s, filter 0.15s;
+}
+
+.impl-btn:hover {
+  background: var(--surface-raised);
+}
+
+.impl-btn--deploy {
+  padding: 12px 24px;
+  color: #0f2a1a;
+  background: var(--success);
+  border-color: transparent;
+  border-radius: 999px;
+}
+
+.impl-btn--deploy:hover {
+  background: var(--success);
+  filter: brightness(1.08);
+}
+
+.impl-btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+  filter: none;
+}
+
+.impl-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.impl-details {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: #c4b5fd;
+  text-decoration: none;
+}
+
+.impl-details:hover {
+  text-decoration: underline;
+}
+
+.impl-footnote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 36px 0 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.impl-create:focus-visible,
+.impl-delete:focus-visible,
+.impl-btn:focus-visible,
+.impl-details:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .implementations {
+    padding: 32px 16px;
+  }
+
+  .impl-header {
+    flex-direction: column;
+  }
+
+  .impl-create {
+    margin-top: 0;
+  }
+
+  .impl-empty {
+    padding: 64px 16px;
+  }
+}

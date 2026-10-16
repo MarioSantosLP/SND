@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { Navigate, useNavigate, useOutletContext, useParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import Icon from '../Icon.jsx'
+import NetworkModal from '../NetworkModal.jsx'
 import logo from '../../assets/logo.png'
 import { currentUser, deploymentSteps, mockNetwork } from '../../data/mock.js'
-import SaveNetworkModal from './SaveNetworkModal.jsx'
 import './chat.css'
 
 const steps = ['Describe', 'Review & confirm', 'Save your plan']
@@ -25,7 +25,7 @@ const decisionMessages = {
 
 function ChatPage() {
   const { id } = useParams()
-  const { conversations, pending, send, decide, deploy, saveNetwork } = useOutletContext()
+  const { conversations, pending, send, decide, deploy, markSaved, networks } = useOutletContext()
   const navigate = useNavigate()
   const bottomRef = useRef(null)
 
@@ -39,6 +39,19 @@ function ChatPage() {
   }, [messages.length, replying])
 
   if (id && !conversation) return <Navigate to="/chat" replace />
+
+  function saveDeployment(message, { name, description }) {
+    const network = { ...mockNetwork, ...message.deployment.network }
+    const networkId = networks.add({
+      name: name.trim(),
+      description: description.trim(),
+      summary: network.summary,
+      specs: network.specs,
+      status: 'deployed',
+      conversationId: id,
+    })
+    markSaved(id, message.id, networkId)
+  }
 
   function handleSend(text) {
     const conversationId = send(id ?? null, text)
@@ -89,7 +102,10 @@ function ChatPage() {
                     {m.deployment ? (
                       <Deployment
                         deployment={m.deployment}
-                        onSave={(network) => saveNetwork(id, m.id, network)}
+                        savedNetwork={networks.networks.find(
+                          (n) => n.id === m.deployment.savedNetworkId,
+                        )}
+                        onSave={(values) => saveDeployment(m, values)}
                       />
                     ) : (
                       <Proposal
@@ -188,9 +204,10 @@ function Proposal({ proposal, current, decision, onDecide }) {
   )
 }
 
-function Deployment({ deployment, onSave }) {
+function Deployment({ deployment, savedNetwork, onSave }) {
   const [now, setNow] = useState(() => Date.now())
   const [saving, setSaving] = useState(false)
+  const network = deployment.network ?? mockNetwork
   const ref = useRef(null)
   const totalMs = deploymentSteps.length * DEPLOY_STEP_MS
   const done = now - deployment.startedAt >= totalMs
@@ -237,10 +254,11 @@ function Deployment({ deployment, onSave }) {
           </div>
         ))}
       </dl>
-      {deployment.saved ? (
+      {savedNetwork ? (
         <p className="saved-note">
           <Icon name="check" size={16} />
-          Saved as “{deployment.saved.name}”
+          Saved as “{savedNetwork.name}”.
+          <Link to="/implementations">View in Implementations</Link>
         </p>
       ) : (
         <button type="button" className="btn-save" onClick={() => setSaving(true)}>
@@ -249,10 +267,13 @@ function Deployment({ deployment, onSave }) {
         </button>
       )}
       {saving && (
-        <SaveNetworkModal
-          network={deployment.network ?? mockNetwork}
-          onSave={(network) => {
-            onSave(network)
+        <NetworkModal
+          title="Save Network Configuration"
+          submitLabel="Save Network"
+          initialValues={{ name: '', description: network.description }}
+          summary={network.summary}
+          onSubmit={(values) => {
+            onSave(values)
             setSaving(false)
           }}
           onClose={() => setSaving(false)}

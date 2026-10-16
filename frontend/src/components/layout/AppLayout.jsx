@@ -4,6 +4,7 @@ import Icon from '../Icon.jsx'
 import logo from '../../assets/logo.png'
 import { currentUser } from '../../data/mock.js'
 import { useConversations } from '../../utils/useConversations.js'
+import { useNetworks } from '../../utils/useNetworks.js'
 import './layout.css'
 
 function AppLayout() {
@@ -11,6 +12,7 @@ function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const chat = useConversations()
+  const networks = useNetworks()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const pageTitle = pathname.startsWith('/implementations') ? 'Implementations' : 'Chat'
@@ -52,6 +54,9 @@ function AppLayout() {
           <NavLink to="/implementations" className="nav-item" onClick={() => setMobileOpen(false)}>
             <Icon name="layers" />
             <span className="label">Implementations</span>
+            {networks.networks.length > 0 && (
+              <span className="nav-count label">{networks.networks.length}</span>
+            )}
           </NavLink>
         </nav>
 
@@ -138,7 +143,7 @@ function AppLayout() {
         </header>
 
         <div className="content">
-          <Outlet context={chat} />
+          <Outlet context={{ ...chat, networks }} />
         </div>
       </div>
     </div>

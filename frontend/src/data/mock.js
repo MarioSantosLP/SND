@@ -55,4 +55,10 @@ export const mockProposal = {
 export const mockNetwork = {
   summary: ['5G Standalone (SA)', 'Open5GS', '1 gNB', '2 UEs', 'Deployed (Simulated)'],
   description: '5G SA network with Open5GS, 1 gNB, and 2 UEs.',
+  specs: [
+    ['Core', 'Open5GS'],
+    ['RAN', 'UERANSIM'],
+    ['gNBs', '1'],
+    ['UEs', '2'],
+  ],
 }

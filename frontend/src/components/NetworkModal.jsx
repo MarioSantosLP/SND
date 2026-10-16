@@ -1,14 +1,12 @@
 import { useEffect, useRef } from 'react'
-import Icon from '../Icon.jsx'
-import { useForm } from '../../utils/useForm.js'
-import { validateNetwork } from '../../utils/validation.js'
+import Icon from './Icon.jsx'
+import { useForm } from '../utils/useForm.js'
+import { validateNetwork } from '../utils/validation.js'
+import './NetworkModal.css'
 
-function SaveNetworkModal({ network, onSave, onClose }) {
+function NetworkModal({ title, submitLabel, initialValues, summary, onSubmit, onClose }) {
   const dialogRef = useRef(null)
-  const { fieldProps, handleSubmit } = useForm(
-    { name: '', description: network.description },
-    validateNetwork,
-  )
+  const { fieldProps, handleSubmit } = useForm(initialValues, validateNetwork)
   const { error: nameError, ...nameProps } = fieldProps('name')
   const { error: descriptionError, ...descriptionProps } = fieldProps('description')
 
@@ -16,8 +14,12 @@ function SaveNetworkModal({ network, onSave, onClose }) {
     dialogRef.current.showModal()
   }, [])
 
+  function close() {
+    dialogRef.current.close()
+  }
+
   function handleBackdropClick(e) {
-    if (e.target === dialogRef.current) dialogRef.current.close()
+    if (e.target === dialogRef.current) close()
   }
 
   return (
@@ -26,17 +28,12 @@ function SaveNetworkModal({ network, onSave, onClose }) {
       className="modal"
       onClose={onClose}
       onClick={handleBackdropClick}
-      aria-labelledby="save-network-title"
+      aria-labelledby="network-modal-title"
     >
-      <form className="modal-card" onSubmit={handleSubmit(onSave)} noValidate>
+      <form className="modal-card" onSubmit={handleSubmit(onSubmit)} noValidate>
         <header className="modal-header">
-          <h2 id="save-network-title">Save Network Configuration</h2>
-          <button
-            type="button"
-            className="modal-close"
-            onClick={() => dialogRef.current.close()}
-            aria-label="Close"
-          >
+          <h2 id="network-modal-title">{title}</h2>
+          <button type="button" className="modal-close" onClick={close} aria-label="Close">
             <Icon name="close" size={20} />
           </button>
         </header>
@@ -66,7 +63,7 @@ function SaveNetworkModal({ network, onSave, onClose }) {
         <div className="modal-field">
           <div className="modal-label-row">
             <label htmlFor="description">Description</label>
-            <span className="muted-small">Optional</span>
+            <span className="modal-optional">Optional</span>
           </div>
           <textarea
             {...descriptionProps}
@@ -84,15 +81,15 @@ function SaveNetworkModal({ network, onSave, onClose }) {
 
         <p className="network-summary">
           <Icon name="layers" size={16} />
-          {network.summary.join(' · ')}
+          {summary.join(' · ')}
         </p>
 
         <footer className="modal-footer">
-          <button type="button" className="btn-secondary" onClick={() => dialogRef.current.close()}>
+          <button type="button" className="btn-secondary" onClick={close}>
             Cancel
           </button>
-          <button type="submit" className="btn-save btn-save--sm">
-            Save Network
+          <button type="submit" className="modal-submit">
+            {submitLabel}
           </button>
         </footer>
       </form>
@@ -100,4 +97,4 @@ function SaveNetworkModal({ network, onSave, onClose }) {
   )
 }
 
-export default SaveNetworkModal
+export default NetworkModal

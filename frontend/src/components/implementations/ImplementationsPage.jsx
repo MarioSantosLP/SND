@@ -1,9 +1,159 @@
+import { useState } from 'react'
+import { Link, useNavigate, useOutletContext } from 'react-router-dom'
+import Icon from '../Icon.jsx'
+import NetworkModal from '../NetworkModal.jsx'
+import './implementations.css'
+
+const statusLabels = {
+  deployed: 'Deployed (Simulated)',
+  deploying: 'Deploying…',
+  saved: 'Saved',
+}
+
+function formatDate(timestamp) {
+  return new Date(timestamp).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
 function ImplementationsPage() {
+  const { networks } = useOutletContext()
+  const navigate = useNavigate()
+  const [editing, setEditing] = useState(null)
+  const count = networks.networks.length
+
+  function createNetwork() {
+    navigate('/chat')
+  }
+
+  function confirmDelete(network) {
+    if (window.confirm(`Delete “${network.name}”? This can't be undone.`)) {
+      networks.remove(network.id)
+    }
+  }
+
   return (
-    <section style={{ padding: '32px' }}>
-      <h1 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 600 }}>Implementations</h1>
-      <p style={{ color: 'var(--text-muted)' }}>Coming soon.</p>
-    </section>
+    <div className="implementations">
+      <header className="impl-header">
+        <div>
+          <p className="impl-eyebrow">Your network library</p>
+          <h1>Implementations</h1>
+          <p className="impl-subtitle">View and manage your saved 5G network configurations.</p>
+        </div>
+        <button type="button" className="impl-create" onClick={createNetwork}>
+          <Icon name="plus" />
+          Create Network
+        </button>
+      </header>
+
+      <div className="impl-toolbar">
+        <h2>
+          Saved configurations <span className="impl-count">{count}</span>
+        </h2>
+        <span className="impl-storage">Stored in this demo session</span>
+      </div>
+
+      {count === 0 ? (
+        <section className="impl-empty">
+          <span className="impl-icon impl-icon--lg">
+            <Icon name="layers" size={26} />
+          </span>
+          <h3>No saved implementations yet.</h3>
+          <p>
+            Start a conversation with the AI assistant to create your first 5G network
+            configuration.
+          </p>
+          <button type="button" className="impl-create" onClick={createNetwork}>
+            <Icon name="plus" />
+            Create Network
+          </button>
+        </section>
+      ) : (
+        <ul className="impl-grid">
+          {networks.networks.map((n) => (
+            <li key={n.id} className="impl-card">
+              <div className="impl-card-top">
+                <span className="impl-icon">
+                  <Icon name="network" />
+                </span>
+                <span className={`impl-status impl-status--${n.status}`}>
+                  {n.status === 'deployed' && <Icon name="check" size={12} />}
+                  {statusLabels[n.status]}
+                </span>
+                <button
+                  type="button"
+                  className="impl-delete"
+                  onClick={() => confirmDelete(n)}
+                  aria-label={`Delete ${n.name}`}
+                >
+                  <Icon name="trash" size={16} />
+                </button>
+              </div>
+
+              <h3>{n.name}</h3>
+              <p className="impl-description">{n.description || 'No description.'}</p>
+
+              <dl className="impl-specs">
+                {n.specs.map(([key, value]) => (
+                  <div key={key}>
+                    <dt>{key}</dt>
+                    <dd>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              <div className="impl-actions">
+                <button
+                  type="button"
+                  className="impl-btn impl-btn--deploy"
+                  onClick={() => networks.deploy(n.id)}
+                  disabled={n.status === 'deploying'}
+                >
+                  {n.status === 'deploying' ? 'Deploying…' : 'Deploy'}
+                </button>
+                <button type="button" className="impl-btn" onClick={() => setEditing(n)}>
+                  Edit
+                </button>
+                <button type="button" className="impl-btn" onClick={() => networks.duplicate(n.id)}>
+                  Duplicate
+                </button>
+              </div>
+
+              <div className="impl-card-footer">
+                <span>Created {formatDate(n.createdAt)}</span>
+                {n.conversationId && (
+                  <Link to={`/chat/${n.conversationId}`} className="impl-details">
+                    View Details
+                    <Icon name="chevronRight" size={14} />
+                  </Link>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <p className="impl-footnote">
+        <Icon name="lock" size={12} />
+        Saved plans are for reference only. No infrastructure has been deployed.
+      </p>
+
+      {editing && (
+        <NetworkModal
+          title="Edit Network Configuration"
+          submitLabel="Save Changes"
+          initialValues={{ name: editing.name, description: editing.description }}
+          summary={editing.summary}
+          onSubmit={({ name, description }) => {
+            networks.update(editing.id, { name: name.trim(), description: description.trim() })
+            setEditing(null)
+          }}
+          onClose={() => setEditing(null)}
+        />
+      )}
+    </div>
   )
 }
 
