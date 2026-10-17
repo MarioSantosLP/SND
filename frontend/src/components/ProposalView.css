@@ -1,0 +1,70 @@
+.proposal-view h3 {
+  margin: 18px 0 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.proposal-view > p {
+  margin: 14px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.proposal-view h4 {
+  margin: 26px 0 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.kv-table {
+  margin: 0;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.kv-table div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 12px;
+}
+
+.kv-table div + div {
+  border-top: 1px solid var(--border);
+}
+
+.kv-table dt {
+  color: var(--text-muted);
+}
+
+.kv-table dd {
+  margin: 0;
+  font-weight: 500;
+  text-align: right;
+}
+
+
+.proposal-view--accent h3,
+.proposal-view--accent h4 {
+  color: #c4b5fd;
+}
+
+.proposal-view--accent h3 {
+  margin-top: 26px;
+  font-size: 1.25rem;
+}
+
+.proposal-view--accent > p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.proposal-view--accent .kv-table {
+  font-size: 0.85rem;
+  border-radius: 10px;
+}
+
+.proposal-view--accent .kv-table div {
+  padding: 13px 16px;
+}

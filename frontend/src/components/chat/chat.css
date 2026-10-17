@@ -153,52 +153,6 @@
   padding-top: 14px;
 }
 
-.proposal h3 {
-  margin: 18px 0 0;
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-
-.proposal > p {
-  margin: 14px 0 0;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.proposal h4 {
-  margin: 26px 0 10px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.kv-table {
-  margin: 0;
-  font-size: 0.8rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-.kv-table div {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 9px 12px;
-}
-
-.kv-table div + div {
-  border-top: 1px solid var(--border);
-}
-
-.kv-table dt {
-  color: var(--text-muted);
-}
-
-.kv-table dd {
-  margin: 0;
-  font-weight: 500;
-  text-align: right;
-}
-
 .proposal hr {
   margin: 20px 0;
   border: none;

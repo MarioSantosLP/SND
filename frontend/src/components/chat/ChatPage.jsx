@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import Icon from '../Icon.jsx'
 import NetworkModal from '../NetworkModal.jsx'
+import ProposalView, { KeyValueTable } from '../ProposalView.jsx'
 import logo from '../../assets/logo.png'
-import { currentUser, deploymentSteps, mockNetwork } from '../../data/mock.js'
+import { currentUser, deploymentSteps, mockNetwork, mockProposal } from '../../data/mock.js'
 import './chat.css'
 
 const steps = ['Describe', 'Review & confirm', 'Save your plan']
@@ -42,11 +43,14 @@ function ChatPage() {
 
   function saveDeployment(message, { name, description }) {
     const network = { ...mockNetwork, ...message.deployment.network }
+    const index = messages.indexOf(message)
+    const proposal = messages.slice(0, index).findLast((m) => m.proposal)?.proposal
     const networkId = networks.add({
       name: name.trim(),
       description: description.trim(),
       summary: network.summary,
       specs: network.specs,
+      proposal: proposal ?? mockProposal,
       status: 'deployed',
       conversationId: id,
     })
@@ -159,23 +163,7 @@ function Proposal({ proposal, current, decision, onDecide }) {
   return (
     <article className="proposal">
       <span className="tag tag--pill">{current ? 'Current proposal' : 'Previous proposal'}</span>
-      <h3>{proposal.title}</h3>
-      <p>{proposal.summary}</p>
-
-      {proposal.sections.map((section) => (
-        <section key={section.title}>
-          <h4>{section.title}</h4>
-          <dl className="kv-table">
-            {section.rows.map(([key, value]) => (
-              <div key={key}>
-                <dt>{key}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      ))}
-
+      <ProposalView proposal={proposal} />
       <hr />
 
       {decision ? (
@@ -246,14 +234,7 @@ function Deployment({ deployment, savedNetwork, onSave }) {
         <Icon name="check" size={20} />
         Network deployed successfully!
       </p>
-      <dl className="kv-table">
-        {deployment.result.map(([key, value]) => (
-          <div key={key}>
-            <dt>{key}</dt>
-            <dd>{value}</dd>
-          </div>
-        ))}
-      </dl>
+      <KeyValueTable rows={deployment.result} />
       {savedNetwork ? (
         <p className="saved-note">
           <Icon name="check" size={16} />

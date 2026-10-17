@@ -1,42 +1,16 @@
-import { useEffect, useRef } from 'react'
 import Icon from './Icon.jsx'
+import Modal from './Modal.jsx'
 import { useForm } from '../utils/useForm.js'
 import { validateNetwork } from '../utils/validation.js'
-import './NetworkModal.css'
 
 function NetworkModal({ title, submitLabel, initialValues, summary, onSubmit, onClose }) {
-  const dialogRef = useRef(null)
   const { fieldProps, handleSubmit } = useForm(initialValues, validateNetwork)
   const { error: nameError, ...nameProps } = fieldProps('name')
   const { error: descriptionError, ...descriptionProps } = fieldProps('description')
 
-  useEffect(() => {
-    dialogRef.current.showModal()
-  }, [])
-
-  function close() {
-    dialogRef.current.close()
-  }
-
-  function handleBackdropClick(e) {
-    if (e.target === dialogRef.current) close()
-  }
-
   return (
-    <dialog
-      ref={dialogRef}
-      className="modal"
-      onClose={onClose}
-      onClick={handleBackdropClick}
-      aria-labelledby="network-modal-title"
-    >
-      <form className="modal-card" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <header className="modal-header">
-          <h2 id="network-modal-title">{title}</h2>
-          <button type="button" className="modal-close" onClick={close} aria-label="Close">
-            <Icon name="close" size={20} />
-          </button>
-        </header>
+    <Modal title={title} onClose={onClose}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <p className="modal-subtitle">Give your configuration a name so it's easy to find later.</p>
 
         <div className="modal-field">
@@ -85,7 +59,7 @@ function NetworkModal({ title, submitLabel, initialValues, summary, onSubmit, on
         </p>
 
         <footer className="modal-footer">
-          <button type="button" className="btn-secondary" onClick={close}>
+          <button type="button" className="btn-secondary" onClick={onClose}>
             Cancel
           </button>
           <button type="submit" className="modal-submit">
@@ -93,7 +67,7 @@ function NetworkModal({ title, submitLabel, initialValues, summary, onSubmit, on
           </button>
         </footer>
       </form>
-    </dialog>
+    </Modal>
   )
 }
 

@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import Icon from '../Icon.jsx'
+import Modal, { ConfirmDialog } from '../Modal.jsx'
 import NetworkModal from '../NetworkModal.jsx'
+import ProposalView from '../ProposalView.jsx'
+import { mockProposal } from '../../data/mock.js'
 import './implementations.css'
 
 const statusLabels = {
@@ -21,17 +24,11 @@ function formatDate(timestamp) {
 function ImplementationsPage() {
   const { networks } = useOutletContext()
   const navigate = useNavigate()
-  const [editing, setEditing] = useState(null)
+  const [dialog, setDialog] = useState(null)
   const count = networks.networks.length
 
   function createNetwork() {
     navigate('/chat')
-  }
-
-  function confirmDelete(network) {
-    if (window.confirm(`Delete “${network.name}”? This can't be undone.`)) {
-      networks.remove(network.id)
-    }
   }
 
   return (
@@ -85,7 +82,7 @@ function ImplementationsPage() {
                 <button
                   type="button"
                   className="impl-delete"
-                  onClick={() => confirmDelete(n)}
+                  onClick={() => setDialog({ type: 'delete', network: n })}
                   aria-label={`Delete ${n.name}`}
                 >
                   <Icon name="trash" size={16} />
@@ -113,7 +110,7 @@ function ImplementationsPage() {
                 >
                   {n.status === 'deploying' ? 'Deploying…' : 'Deploy'}
                 </button>
-                <button type="button" className="impl-btn" onClick={() => setEditing(n)}>
+                <button type="button" className="impl-btn" onClick={() => setDialog({ type: 'edit', network: n })}>
                   Edit
                 </button>
                 <button type="button" className="impl-btn" onClick={() => networks.duplicate(n.id)}>
@@ -123,12 +120,14 @@ function ImplementationsPage() {
 
               <div className="impl-card-footer">
                 <span>Created {formatDate(n.createdAt)}</span>
-                {n.conversationId && (
-                  <Link to={`/chat/${n.conversationId}`} className="impl-details">
-                    View Details
-                    <Icon name="chevronRight" size={14} />
-                  </Link>
-                )}
+                <button
+                  type="button"
+                  className="impl-details"
+                  onClick={() => setDialog({ type: 'details', network: n })}
+                >
+                  View Details
+                  <Icon name="chevronRight" size={14} />
+                </button>
               </div>
             </li>
           ))}
@@ -140,20 +139,56 @@ function ImplementationsPage() {
         Saved plans are for reference only. No infrastructure has been deployed.
       </p>
 
-      {editing && (
+      {dialog?.type === 'edit' && (
         <NetworkModal
           title="Edit Network Configuration"
           submitLabel="Save Changes"
-          initialValues={{ name: editing.name, description: editing.description }}
-          summary={editing.summary}
+          initialValues={{ name: dialog.network.name, description: dialog.network.description }}
+          summary={dialog.network.summary}
           onSubmit={({ name, description }) => {
-            networks.update(editing.id, { name: name.trim(), description: description.trim() })
-            setEditing(null)
+            networks.update(dialog.network.id, { name: name.trim(), description: description.trim() })
+            setDialog(null)
           }}
-          onClose={() => setEditing(null)}
+          onClose={() => setDialog(null)}
         />
       )}
+
+      {dialog?.type === 'delete' && (
+        <ConfirmDialog
+          title="Delete network?"
+          message={`“${dialog.network.name}” will be removed from your library. This can't be undone.`}
+          confirmLabel="Delete"
+          onConfirm={() => {
+            networks.remove(dialog.network.id)
+            setDialog(null)
+          }}
+          onCancel={() => setDialog(null)}
+        />
+      )}
+
+      {dialog?.type === 'details' && (
+        <NetworkDetails network={dialog.network} onClose={() => setDialog(null)} />
+      )}
     </div>
+  )
+}
+
+function NetworkDetails({ network, onClose }) {
+  return (
+    <Modal title={network.name} onClose={onClose} size="lg">
+      {network.description && <p className="modal-subtitle">{network.description}</p>}
+      <span className={`impl-status impl-status--${network.status}`}>
+        {network.status === 'deployed' && <Icon name="check" size={12} />}
+        {statusLabels[network.status]} · Saved {formatDate(network.createdAt)}
+      </span>
+      <ProposalView proposal={network.proposal ?? mockProposal} accent />
+      {network.conversationId && (
+        <Link to={`/chat/${network.conversationId}`} className="impl-details impl-details--modal">
+          Open the original conversation
+          <Icon name="chevronRight" size={14} />
+        </Link>
+      )}
+    </Modal>
   )
 }
 
